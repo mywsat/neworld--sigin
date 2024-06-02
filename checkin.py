@@ -68,7 +68,7 @@ def login(user, password):
 
 
 add_cookies = {"intercom-device-id-sh7mjuq3": "88077d2f-4636-4e2e-8317-c2be2ca5e4dc", "intercom-id-sh7mjuq3": "b559e5c3-1f87-4f32-92a4-ea64a84c82ef", "_pk_id.1.86b2": "9c41cc0eac5d13af.1684203936."}
-cookies = login("1325844611@qq.com", "1325844611")
+cookies = login("", "")
 cookies.update(add_cookies)
 result = "; ".join([f"{key}={value}" for key, value in cookies.items()])
 check_in(result)
