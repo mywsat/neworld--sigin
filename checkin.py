@@ -4,6 +4,7 @@
 @Date : 2024/6/1 0:20
 """
 import requests
+import re
 
 def check_in(cookies):
     check_in_url = "https://neworld.cloud/user/checkin"
@@ -48,6 +49,7 @@ def login(user, password):
         'X-Requested-With': 'XMLHttpRequest',
     }
 
+
     data = {
         'code': '',
         'email': user,
@@ -57,18 +59,22 @@ def login(user, password):
 
     response = requests.post(url, headers=headers, data=data, verify=False)
     # 将Set-Cookie头拆分为单个cookie条目
-    entries = response.headers.get('Set-Cookie').split("path=/")
-    cookies = {}
-    for entry in entries:
-        if entry == "":
-            continue
-        key, value = entry.split("; ")[0].split("=")
-        cookies[key.replace(",", "")] = value
-    return cookies
+    entries = response.headers.get('Set-Cookie')
+    keys_to_extract = ["uid", "key", "email", "expire_in"] 
+
+    # 创建一个正则表达式模板，匹配每个目标键值对
+    cookie_pattern = r'(?P<key>' + '|'.join(keys_to_extract) + r')=([^;]+)'
+
+    # 使用正则表达式查找所有匹配的键值对
+    matches = re.findall(cookie_pattern, entries)
+    # 将匹配的结果转换成字典
+    cookie_dict = {key: value.strip() for key, value in matches}
+
+    return cookie_dict
 
 
 add_cookies = {"intercom-device-id-sh7mjuq3": "88077d2f-4636-4e2e-8317-c2be2ca5e4dc", "intercom-id-sh7mjuq3": "b559e5c3-1f87-4f32-92a4-ea64a84c82ef", "_pk_id.1.86b2": "9c41cc0eac5d13af.1684203936."}
-cookies = login("", "")
+cookies = login(user, password)
 cookies.update(add_cookies)
 result = "; ".join([f"{key}={value}" for key, value in cookies.items()])
 check_in(result)
