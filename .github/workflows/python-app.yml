@@ -30,4 +30,4 @@ jobs:
          USERNAME: ${{ secrets.USERNAME }}
          PASSWORD: ${{ secrets.PASSWORD }}
       run: |
-        python hellp.py
+        python checkin.py
